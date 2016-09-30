@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+    <title><%= htmlWebpackPlugin.options.title %></title>
+  </head>
+  <body>
+    <div id="header" class='clearfix'>
+  <h1>Tankity Tank</h1>
+  <div id="status">
+    <div id='connection'>
+    </div>
+  </div>
+
+  <p id="connecting">
+<!--<input type='text' id="server" value=""></input>-->
+<input type='text' id="player_name" value="Xadism" placeholder='Name'></input>
+    <button type="button" id='connect_button'>connect</button>
+  </p>
+</div>
+
+<div id="content">
+  <div id="status_bar">
+    <div class='section'>
+      <table>
+        <caption>Connection</caption>
+        <tr><th>Socket</th><td id='socket_connection'></td></tr>
+        <tr><th>Game</th><td id='game_connection'></td></tr>
+        <tr><th>Game ID</th><td id="game_id"></td></tr>
+        <tr><th>Player ID</th><td id="player_id"></td></tr>
+      </table>
+    </div>
+    <div class='section'>
+      <table>
+        <caption>Tank State</caption>
+        <tr><th>Coords</th><td id='tank_coords'></td></tr>
+        <tr><th>Speed</th><td id='tank_speed'></td></tr>
+        <tr><th>Rotation</th><td id='tank_rotation'></td></tr>
+        <tr><th>Angular Vel.</th><td id='tank_angular_velocity'></td></tr>
+      </table>
+    </div>
+    <div class='section'>
+      <table>
+        <caption>Game Info</caption>
+        <tr><th># Tanks</th><td id='tank_count'></td></tr>
+        <tr><th># Bullets</th><td id='bullet_count'></td></tr>
+      </table>
+    </div>
+    <div class='section'>
+      <table>
+        <caption>Communication Stats</caption>
+        <tr><th>Messages Rcvd</th><td id='rcvd_message_count'></td></tr>
+        <tr><th>Messages Sent</th><td id='sent_message_count'></td></tr>
+        <tr><th>Frames Rendered</th><td id='frames_rendered'></td></tr>
+      </table>
+    </div>
+    <div class='section' id='status_messages'>
+      <h3>Status Messages</h3>
+      <div class='message_container'></div>
+    </div>
+  </div>
+
+  <div id='field'>
+    <div id="gameField">
+    </div>
+  </div>
+</div>
+
+<div id='debugging_info' class='clearfix'>
+  <div id='sent_messages'>
+     <h3>Sent Messages</h3>
+     <div class='message_container'></div>
+  </div>
+  <div id='received_messages'>
+     <h3>Received Messages</h3>
+     <div class='message_container'></div>
+  </div>
+</div>
+  </body>
+</html>

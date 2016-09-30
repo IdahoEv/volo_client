@@ -1,5 +1,6 @@
 import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 module.exports = {
   entry: './src/app.js',
@@ -8,10 +9,18 @@ module.exports = {
   },
   output: {
     path: 'build',
-    publicPath: './build/',
-    filename: './app.js'
+    filename: 'app.js'
   },
-  plugins: [ new HtmlWebpackPlugin() ],
+  plugins: [ new HtmlWebpackPlugin(
+    { title: "Volo Game Screen",
+      template: "src/index.ejs"
+    }
+  )],
+  // htmlWebpackPlugin: {
+  //   "files": {
+  //     "css": [ "app.css" ]
+  //   }
+  // },
   module: {
     // preLoaders: [
     //   { test: /\.jsx?$/, exclude: /node_modules/, loaders: ['eslint-loader'] }
@@ -23,6 +32,10 @@ module.exports = {
         // test: /\.js$/, loaders: [ "babel-loader", "eslint-loader" ],
         test: /\.js$/, loaders: [ "babel-loader" ],
         exclude: /node_modules/
+      },
+      {
+        test: /\.css$/,
+        loader: 'style-loader!css-loader'
       },
       { test: /sinon\/pkg\/sinon\.js/,
         loader: 'imports?define=>false,require=>false'
