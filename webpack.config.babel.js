@@ -1,6 +1,5 @@
 import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 module.exports = {
   entry: './src/app.js',
@@ -16,11 +15,6 @@ module.exports = {
       template: "src/index.ejs"
     }
   )],
-  // htmlWebpackPlugin: {
-  //   "files": {
-  //     "css": [ "app.css" ]
-  //   }
-  // },
   module: {
     // preLoaders: [
     //   { test: /\.jsx?$/, exclude: /node_modules/, loaders: ['eslint-loader'] }

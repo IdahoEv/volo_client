@@ -27,10 +27,8 @@
     "constitute": "^1.6.2",
     "css-loader": "^0.25.0",
     "eslint-loader": "^1.5.0",
-    "extract-text-webpack-plugin": "^1.0.1",
     "html-webpack-plugin": "^2.22.0",
     "karma": "^1.3.0",
-    "needlepoint": "^1.0.5",
     "style-loader": "^0.13.1",
     "webpack": "^1.13.2"
   }
