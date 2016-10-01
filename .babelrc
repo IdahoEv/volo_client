@@ -1,4 +1,4 @@
 {
-  "presets": ["es2015", "stage-0", "stage-1"],
+  "presets": ["es2015", "es2017" ],
   "plugins":  ["babel-plugin-transform-decorators-legacy"]
  }
