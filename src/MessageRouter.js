@@ -1,5 +1,4 @@
 import { Dependencies } from 'constitute';
-import { _ } from "underscore";
 // import WebsocketHandler from 'WebsocketHandler';
 // import DevUX from "DevUX";
 
@@ -14,18 +13,29 @@ export default class MessageRouter {
   };
 
   subscribe(key, callback) {
-    this.subscriptions.set(key, callback);
-    console.log(this.subscriptions);
+    var existingSubscriptions = this.subscriptions.get(key);
+    if (existingSubscriptions) {
+        existingSubscriptions.push(callback);
+    } else {
+      this.subscriptions.set(key, [callback]);
+    }
   }
+
   unsubscribe(messageKey, callback) {
-    delete this.subscriptions.get(messageKey);
+    var existingSubscriptions = this.subscriptions.get(messageKey);
+    var index = existingSubscriptions.indexOf(callback);
+    if (index > -1) {
+      existingSubscriptions.splice(index, 1);
+    }
   }
 
   // Pass this message to everyone subscribing to one of its keys.
   handle(message) {
-    this.subscriptions.forEach((callback, key) => {
+    this.subscriptions.forEach((subscribers, key) => {
       if (message[key]) {
-        callback.call(null, message);
+        subscribers.forEach( (callback) => {
+          callback.call(null, message);
+        });
       }
     });
   }
