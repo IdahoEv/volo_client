@@ -4,4 +4,4 @@ import styles from "./app.css"
 import DevUX from "DevUX";
 import ConnectionManager from "ConnectionManager";
 import WebsocketHandler from "WebsocketHandler";
-import WebsocketRouter from "WebsocketRouter";
+import MessageRouter from "MessageRouter";

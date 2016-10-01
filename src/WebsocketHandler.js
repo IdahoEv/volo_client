@@ -2,10 +2,10 @@
 // Deals with opening and maintaining the websocket connection to the
 // game server.
 import { Dependencies } from 'constitute';
-import WebsocketRouter from "WebsocketRouter";
+import MessageRouter from "MessageRouter";
 import DevUX from 'DevUX';
 
-@Dependencies(WebsocketRouter, DevUX)
+@Dependencies(MessageRouter, DevUX)
 export class WebsocketHandler {
   constructor(router, devUX) {
     this.websocket = null;

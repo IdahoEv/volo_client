@@ -5,7 +5,7 @@ import DevUX from "DevUX";
 
 
 @Dependencies(WebsocketHandler, DevUX)
-export class WebsocketRouter {
+export class MessageRouter {
   constructor(websocketHandler, devUX){
     this.websocketHandler = websocketHandler;
     this.devUX = devUX;
