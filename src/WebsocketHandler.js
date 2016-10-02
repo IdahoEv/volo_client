@@ -6,7 +6,7 @@ import MessageRouter from "MessageRouter";
 import DevUX from 'DevUX';
 
 @Dependencies(MessageRouter, DevUX)
-export class WebsocketHandler {
+export default class WebsocketHandler {
   constructor(router, devUX) {
     this.websocket = null;
     this.host = `ws://${window.location.host}/websocket`;

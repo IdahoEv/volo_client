@@ -5,3 +5,8 @@ import DevUX from "DevUX";
 import ConnectionManager from "ConnectionManager";
 import WebsocketHandler from "WebsocketHandler";
 import MessageRouter from "MessageRouter";
+
+import constitute from "constitute";
+
+const cm = constitute(ConnectionManager);
+cm.setup();
