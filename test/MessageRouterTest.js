@@ -2,8 +2,6 @@
 
 import MessageRouter from "MessageRouter";
 
-console.log(MessageRouter);
-
 describe("Passing messages to registered callbacks", () => {
   it("passes messages to a callback registered for that key", () => {
     var router = new MessageRouter();
@@ -51,5 +49,15 @@ describe("Passing messages to registered callbacks", () => {
     expect(listener1).to.have.been.calledWith(message);
     expect(listener2).not.to.have.been.calledWith(message);
   });
-  
+
+  it("Passes messages only once when the same callback is subscribed to different keys", () => {
+    var router = new MessageRouter();
+    var listener1 = sinon.spy();
+    var message = { foo: 1, bar: 2};
+    router.subscribe("foo", listener1);
+    router.subscribe("bar", listener1);
+    router.handle(message);
+
+    expect(listener1).to.have.been.calledOnce;
+  });
 });

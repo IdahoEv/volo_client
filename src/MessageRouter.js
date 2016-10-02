@@ -16,6 +16,7 @@ export default class MessageRouter {
     var existingSubscriptions = this.subscriptions.get(key);
     if (existingSubscriptions) {
         existingSubscriptions.push(callback);
+        // this.subscriptions.set(key,  )
     } else {
       this.subscriptions.set(key, [callback]);
     }
@@ -31,13 +32,17 @@ export default class MessageRouter {
 
   // Pass this message to everyone subscribing to one of its keys.
   handle(message) {
+    var matchingSubscribers = [];
     this.subscriptions.forEach((subscribers, key) => {
       if (message[key]) {
-        subscribers.forEach( (callback) => {
-          callback.call(null, message);
-        });
+        // Append all members of subscribers to the accumulated list
+        Array.prototype.push.apply(matchingSubscribers, subscribers);
       }
     });
+    // Dedupe the matches and call them
+    Array.from(new Set(matchingSubscribers)).forEach(
+      (callback) => callback.call(null, message)
+    );
   }
 
 }
