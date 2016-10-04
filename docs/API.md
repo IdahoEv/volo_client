@@ -11,24 +11,31 @@ is reserved for later use.
 volo_client attempts to connect as follows:
 
 ```
-// SEND  client -> server
+// client -> server
 { connect: {
-    player_id: '12345',
-    game_id: '12345'  
+    private_id:  ('12345' or null),
+    game_id: ('12345' or null)  
   }
 }
 ```
 
-If ids are specified, it will attempt to reconnect the player to the specified
-tank in the specified game.  If neither are available, the game will attempt
-to create a new tank for the player, or a new game, or both.  A successful
-connection will result in this response:
+If ids are specified (non-null), it will attempt to reconnect the player to the
+specified tank in the specified game.  If neither are available, the game will
+attempt to create a new tank for the player, or a new game, or both.  A
+successful connection will result in this response:
 
 ```
-// SEND  server -> client
+// server -> client
 { connected: {
-    player_id: '12345',
+    private_id: '12345',
     game_id: '12345'  
   }
 }
+```
+
+A failed connection will result in this response:
+
+```
+// server -> client
+{ connection_failed: "String explaining the reason" }
 ```

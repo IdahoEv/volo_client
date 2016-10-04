@@ -13,16 +13,17 @@ export default class ConnectionManager {
     this.messageRouter = messageRouter;
   }
 
-  setup() {
+  initialize() {
     this.gameConnected = false;
     this.gameID = localStorage.getItem("VoloGameID");
-    this.playerID = localStorage.getItem("VoloPlayerID");
+    this.privateID = localStorage.getItem("VoloPrivateID");
     console.log("Connection mgr connected callback:");
     console.log(this.connected);
     this.messageRouter.subscribe("connected", this.connected);
   }
 
   connectToGame(){
+    console.log("Attempting to connect");
     if (this.gameConnected) {
       return;
     }
@@ -31,16 +32,16 @@ export default class ConnectionManager {
     }
     // if we have a game ID and a player ID, attempt to connect to that.
     this.websockketHandler.transmit({
-      playerID: this.playerID,
+      privateID: this.privateID,
       gameID:   this.gameID
     })
   }
 
   // callback for when a connection was successful
   connected(message){
-    this.playerID = message["player_id"];
+    this.privateID = message["private_id"];
     this.gameID = message["game_id"];
-    localStorage.setItem("VoloPlayerID", this.playerID);
+    localStorage.setItem("VoloPrivateID", this.privateID);
     localStorage.setItem("VoloGameID", this.gameID);
     this.gameConnected = true;
   }
