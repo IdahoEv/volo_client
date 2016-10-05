@@ -1,14 +1,11 @@
 import { Dependencies } from 'constitute';
-// import WebsocketHandler from 'WebsocketHandler';
-// import DevUX from "DevUX";
 
 
 // Handles routing messages from the websocket to modules that care
 // about them.
 
-@Dependencies()
 export default class MessageRouter {
-  constructor(websocketHandler, devUX){
+  constructor(){
     this.subscriptions = new Map();
   };
 

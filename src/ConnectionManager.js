@@ -5,9 +5,10 @@ import WebsocketHandler from 'WebsocketHandler';
 import DevUX from 'DevUX';
 import MessageRouter from 'MessageRouter';
 
-@Dependencies(WebsocketHandler, DevUX, MessageRouter)
+@Dependencies(MessageRouter, DevUX, WebsocketHandler )
 export default class ConnectionManager {
-  constructor(websocketHandler, devUX, messageRouter) {
+
+  constructor(messageRouter, devUX, websocketHandler) {
     this.websocketHandler = websocketHandler;
     this.devUX = devUX;
     this.messageRouter = messageRouter;
@@ -27,14 +28,19 @@ export default class ConnectionManager {
     if (this.gameConnected) {
       return;
     }
-    if (!this.websocketHandler.isReady()) {
-      this.websocketHandler.connect();
-    }
-    // if we have a game ID and a player ID, attempt to connect to that.
-    this.websockketHandler.transmit({
-      privateID: this.privateID,
-      gameID:   this.gameID
-    })
+    this.websocketHandler.connect().then(() => {
+        console.log("sending player connection request");
+        var data = {
+          connect: {
+            private_id: this.privateID || null,
+            game_id:   this.gameID || null
+          }
+        };
+        console.log("Sending in CM: ", data);
+        this.websocketHandler.transmit(data);
+      }, () => {
+        console.log("Error attempting to connect");
+      });
   }
 
   // callback for when a connection was successful

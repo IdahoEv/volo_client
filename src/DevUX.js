@@ -1,21 +1,26 @@
 // Responsible for all the debugging and meta information, including both
 // display and controls.
-import { Dependencies } from 'constitute';
+import { Container } from 'constitute';
 import ConnectionManager from "ConnectionManager";
 
-@Dependencies(ConnectionManager)
 export default class DevUX {
-  constructor(connectionManager){
-    this.connectionManager = connectionManager;
+  static constitute() { return [ Container ] }
+  constructor(container){
+    container.schedulePostConstructor(function(connectionManager){
+      this.connectionManager = connectionManager;
+    }, [ ConnectionManager ]);
   }
   initialize() {
+    console.log("initializing interface");
+    var scope = this;
     $('#connect_button').addEventListener('click', function() {
-      this.connectionManager.connectToGame();
+      console.log("Connect button clicked");
+      scope.connectionManager.connectToGame();
     });
   }
 
-  static socketConnected()   {  $('#socket_connection').HTML('ON');  }
-  static socketDisconnected(){  $('#socket_connection').HTML('OFF');  }
-  static gameConnected()     {  $('#socket_connection').HTML('ON');  }
-  static gameDisconnected()  {  $('#socket_connection').HTML('OFF');  }
+  socketConnected()   {   $('#socket_connection').innerHTML = 'ON';  }
+  socketDisconnected(){  $('#socket_connection').innerHTML = 'OFF';  }
+  gameConnected()     {  $('#socket_connection').innerHTML = 'ON';  }
+  gameDisconnected()  {  $('#socket_connection').innerHTML = 'OFF';  }
 }

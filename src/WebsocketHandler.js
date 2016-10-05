@@ -3,36 +3,57 @@
 // game server.
 import { Dependencies } from 'constitute';
 import MessageRouter from "MessageRouter";
-import DevUX from 'DevUX';
+import DevUX from "DevUX";
 
 @Dependencies(MessageRouter, DevUX)
 export default class WebsocketHandler {
-  constructor(router, devUX) {
+  constructor(messageRouter, DevUX) {
     this.websocket = null;
-    this.host = `ws://${window.location.host}/websocket`;
-    this.router = router;
+    this.host = `ws://${this.hostname()}/websocket`;
+    this.router = messageRouter;
+    this.devUX = DevUX;
   }
 
-  connect() {
-    if (websocket == undefined || !(websocket.readyState == websocket.OPEN)) {
-      websocket = new WebSocket(this.host);
-      websocket.onopen = (evt) => { router.socketOpened(evt) };
-      websocket.onclose = (evt) => { router.socketClosed(evt) };
-      websocket.onmessage = (evt) => { receiveMessage(evt); };
-      websocket.onerror = (evt) => { router.errorReceived(evt) };
-    }
-    return websocket.readyState == websocket.OPEN;
+  hostname() {
+    return window.location.host || "localhost:8080";
+  }
+
+
+  connect(callback) {
+    self = this;
+    if (self.isReady()) {
+      return new Promise((resolve, reject) => { resolve() });
+    } else {
+      return new Promise((resolve, reject) => {
+        self.websocket = new WebSocket(self.host);
+        self.websocket.onclose   = (evt) => { self.socketClosed(evt) };
+        self.websocket.onmessage = (evt) => { self.receiveMessage(evt); };
+        self.websocket.onerror   = (evt) => {
+          self.errorReceived(evt);
+          reject(evt);
+        };
+        self.websocket.onopen =  (evt) => {
+          console.log(`onopen callbacke, readystate is ${self.websocket.readyState}`);
+          self.socketOpened(evt);
+          resolve(evt);
+        };
+      });
+    };
   };
 
   disconnect() {
     websocket.close();
   };
 
-  transmit(object) {
-    if(isReady()) {
-      websocket.send(JSON.stringify(object));
+  transmit(toSend) {
+    console.log("Transmit function 1, sending ", toSend );
+    if(this.isReady()) {
+      console.log("Transmit function 2, sending ", toSend );
+      var data = JSON.stringify(toSend);
+      console.log("sending", data);
+      this.websocket.send(data);
     } else {
-      router.socketClosed(null);
+      console.log(`unable to send, readystate is ${this.websocket.readyState}`);
     }
   }
 
@@ -42,6 +63,12 @@ export default class WebsocketHandler {
   }
 
   isReady(){
-    this.websocket.readyState == websocket.OPEN;
+    return this.websocket && this.websocket.readyState == WebSocket.OPEN;
+  }
+  socketOpened(event){
+    this.devUX.socketConnected();
+  }
+  socketClosed(event){
+    this.devUX.socketDisconnected();
   }
 }
