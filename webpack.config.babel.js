@@ -15,6 +15,7 @@ module.exports = {
       template: "src/index.ejs"
     }
   )],
+  devtool: "#source-map",
   module: {
     // preLoaders: [
     //   { test: /\.jsx?$/, exclude: /node_modules/, loaders: ['eslint-loader'] }
@@ -24,8 +25,7 @@ module.exports = {
       // { test: /node_modules\/constitute\/\.js$/, loader: "babel-loader" },
       {
         // test: /\.js$/, loaders: [ "babel-loader", "eslint-loader" ],
-        test: /\.js$/, loaders: [ "babel-loader" ],
-        exclude: /node_modules/
+        test: /\.js$/, loaders: [ "babel-loader" ]
       },
       {
         test: /\.css$/,
