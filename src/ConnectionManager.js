@@ -11,6 +11,11 @@ export default class ConnectionManager {
     console.log("constructing ConnectionManager");
     this.websocketHandler = websocketHandler;
     this.messageRouter = messageRouter;
+
+    this.messageRouter.subscribe("connected", this.connected.bind(this));
+    this.messageRouter.subscribe("connectionRequested", this.connectToGame.bind(this));
+    this.messageRouter.subscribe("disconnectionRequested", this.disconnectFromGame.bind(this));
+    this.messageRouter.subscribe("clearGameInfoRequested", this.clearGameInfo.bind(this));
   }
 
   initialize() {
@@ -18,10 +23,10 @@ export default class ConnectionManager {
     this.gameID =     this.clean(localStorage.getItem("VoloGameID"));
     this.privateID =  this.clean(localStorage.getItem("VoloPrivateID"));
     this.playerName = this.clean(localStorage.getItem("VoloPlayerName"));
-    this.messageRouter.subscribe("connected", this.connected.bind(this));
-    this.messageRouter.subscribe("connectionRequested", this.connectToGame.bind(this));
-
-    this.messageRouter.handle({ prevStateLoaded: { 
+    this.notifyInfoUpdated();
+  }
+  notifyInfoUpdated(){
+    this.messageRouter.handle({ connectionInfoUpdated: { 
       gameID: this.gameID,
       privateID: this.privateID,
       playerName: this.playerName
@@ -29,19 +34,19 @@ export default class ConnectionManager {
   }
   
   clean(value) {
-    if (value === "undefined") {
-      return null
+    if (value === "undefined" || value === "") {
+      return null;
     }
+    return value;
   }
 
   connectToGame(){    
-    var playerName = $('#player_name').val();  
-    console.log("Attempting to connect, player name is ", playerName);
+    var playerName = this.clean($('#player_name').val());  
     if (this.gameConnected) {
       return;
     }
     this.websocketHandler.connect().then(() => {
-        console.log("sending player connection request");
+        // console.log("sending player connection request");
         var data = {
           connect: {
             private_id:   this.privateID || null,
@@ -49,23 +54,51 @@ export default class ConnectionManager {
             player_name:  playerName
           }
         };
-        console.log("Sending in CM: ", data);
+        // console.log("Sending in CM: ", data);
         this.websocketHandler.transmit(data);
       }, () => {
-        console.log("Error attempting to connect");
+        // console.log("Error attempting to connect");
         this.messageRouter.handle({ webSocketDisconnected: true })
       });
+  }
+  
+  disconnectFromGame(){
+    this.websocketHandler.disconnect();
+    this.gameConnected = false;
+    this.messageRouter.handle({ gameDisconnected: true, webSocketDisonnected: true });
+  }
+  
+  clearGameInfo(msg){
+    this.disconnectFromGame();
+    this.gameID = null;
+    this.privateID = null;
+    this.playerName = null;
+    this.updateLocalStorage();
+    this.notifyInfoUpdated();
   }
 
   // callback for when a connection was successful
   connected(message){
-    this.privateID = message["connected"]["private_id"];
-    this.gameID = message["connected"]["game_id"];
-    this.playerName = message["connected"]["player_name"];
-    localStorage.setItem("VoloPrivateID",  this.privateID);
-    localStorage.setItem("VoloGameID",     this.gameID);
-    localStorage.setItem("VoloPlayerName", this.playerName);
+    this.privateID =  this.clean(message.connected.private_id);
+    this.gameID =     this.clean(message.connected.game_id);
+    this.playerName = this.clean(message.connected.player_name);
+    this.updateLocalStorage();
+    this.notifyInfoUpdated();
     this.gameConnected = true;
+    this.messageRouter.handle({ gameConnected: true });
+  }
+  
+  updateLocalStorage(){  
+    this.storeItem("VoloPrivateID",  this.privateID);
+    this.storeItem("VoloGameID",     this.gameID);
+    this.storeItem("VoloPlayerName", this.playerName);    
+  }
+  storeItem(key, value){
+    if (this.clean(value) === null) {
+      localStorage.removeItem(key);
+    } else {
+      localStorage.setItem(key, value);
+    }
   }
 
   get isConnected() { return this.gameConnected }

@@ -10,25 +10,31 @@ export default class DevUX {
     console.log("constructing DevUX");
 
     this.messageRouter = messageRouter;
-    this.messageRouter.subscribe("prevStateLoaded", this.stateLoaded.bind(this));
     this.messageRouter.subscribe("webSocketConnected", this.socketConnected.bind(this));
-    this.messageRouter.subscribe("webSocketDisonnected", this.socketDisconnected.bind(this));
+    this.messageRouter.subscribe("webSocketDisconnected", this.socketDisconnected.bind(this));
 
     this.messageRouter.subscribe("connected", this.gameConnected.bind(this));
     this.messageRouter.subscribe("connection_failed", this.gameDisconnected.bind(this));
     
-    this.messageRouter.subscribe("gameDisonnected", this.gameDisconnected.bind(this));
+    this.messageRouter.subscribe("gameDisconnected", this.gameDisconnected.bind(this));
     this.messageRouter.subscribe("webSocketMessageReceived", this.messageReceived.bind(this));
     this.messageRouter.subscribe("webSocketMessageSent", this.messageSent.bind(this));
+    this.messageRouter.subscribe("connectionInfoUpdated", this.infoUpdated.bind(this));
   }
 
   initialize() {
     console.log("initializing interface");
     var scope = this;
     $('#connect_button').click(function() {
-      console.log("Connect button clicked");
       scope.messageRouter.handle({"connectionRequested": true});
     });
+    $('#disconnect_button').click(function() {
+      scope.messageRouter.handle({"disconnectionRequested": true});
+    });
+    $('#clear_button').click(function() {
+      scope.messageRouter.handle({"clearGameInfoRequested": true});
+    });
+    
     this.socketDisconnected();
     this.gameDisconnected();
   }
@@ -37,22 +43,29 @@ export default class DevUX {
   socketConnected()   {  $('#socket_connection').html('ON').addClass('on'); }
   socketDisconnected(){  $('#socket_connection').html('OFF').removeClass('on');  }
   gameConnected(message)     {  
+    $('#connect_button').prop('disabled', true);
+    $('#disconnect_button').prop('disabled', false);
+    $('#clear_button').prop('disabled', true);
+    
     $('#game_connection').html('ON').addClass('on'); 
-    $('#game_id').html(message.connected.game_id);
-    $('#private_id').html(message.connected.private_id);
+    // $('#game_id').html(message.connected.game_id);
+    // $('#private_id').html(message.connected.private_id);
+    // $('#player_name').val(message.connectionInfoUpdated.playerName);
+  }
+  infoUpdated(message)     {  
+    $('#game_id').html(message.connectionInfoUpdated.gameID);
+    $('#private_id').html(message.connectionInfoUpdated.privateID);
+    $('#player_name').val(message.connectionInfoUpdated.playerName);
   }
   gameDisconnected()  {  
+    console.log('disconnected callback');
+    $('#connect_button').prop('disabled', false);
+    $('#disconnect_button').prop('disabled', true);
+    $('#clear_button').prop('disabled', false);
+    
     $('#game_connection').html('OFF').removeClass('on');  
-    $('#game_id').html(null);
-    $('#private_id').html(null);
   }
   
-  stateLoaded(message) {
-    $('#game_id').html(message.prevStateLoaded.game_id);
-    $('#private_id').html(message.prevStateLoaded.private_id);
-    $('#player_name').html(message.prevStateLoaded.player_name);  
-  }
-
   messageReceived(msg)   { 
     let data = JSON.stringify(msg);
     console.log('Message Received', msg);

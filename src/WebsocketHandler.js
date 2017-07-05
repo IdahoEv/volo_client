@@ -41,7 +41,11 @@ export default class WebsocketHandler {
   };
 
   disconnect() {
-    websocket.close();
+    if (this.websocket) {
+      this.websocket.close();      
+    }
+    this.websocket = null;
+    this.messageRouter.handle({ webSocketDisconnected: true })
   };
 
   transmit(toSend) {
