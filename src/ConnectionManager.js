@@ -2,29 +2,41 @@
 import { Dependencies } from 'constitute';
 
 import WebsocketHandler from 'WebsocketHandler';
-import DevUX from 'DevUX';
 import MessageRouter from 'MessageRouter';
 
-@Dependencies(MessageRouter, DevUX, WebsocketHandler )
+@Dependencies(MessageRouter, WebsocketHandler )
 export default class ConnectionManager {
 
-  constructor(messageRouter, devUX, websocketHandler) {
+  constructor(messageRouter, websocketHandler) {
+    console.log("constructing ConnectionManager");
     this.websocketHandler = websocketHandler;
-    this.devUX = devUX;
     this.messageRouter = messageRouter;
   }
 
   initialize() {
     this.gameConnected = false;
-    this.gameID = localStorage.getItem("VoloGameID");
-    this.privateID = localStorage.getItem("VoloPrivateID");
-    console.log("Connection mgr connected callback:");
-    console.log(this.connected);
-    this.messageRouter.subscribe("connected", this.connected);
+    this.gameID =     this.clean(localStorage.getItem("VoloGameID"));
+    this.privateID =  this.clean(localStorage.getItem("VoloPrivateID"));
+    this.playerName = this.clean(localStorage.getItem("VoloPlayerName"));
+    this.messageRouter.subscribe("connected", this.connected.bind(this));
+    this.messageRouter.subscribe("connectionRequested", this.connectToGame.bind(this));
+
+    this.messageRouter.handle({ prevStateLoaded: { 
+      gameID: this.gameID,
+      privateID: this.privateID,
+      playerName: this.playerName
+    }});
+  }
+  
+  clean(value) {
+    if (value === "undefined") {
+      return null
+    }
   }
 
-  connectToGame(){
-    console.log("Attempting to connect");
+  connectToGame(){    
+    var playerName = $('#player_name').val();  
+    console.log("Attempting to connect, player name is ", playerName);
     if (this.gameConnected) {
       return;
     }
@@ -32,23 +44,27 @@ export default class ConnectionManager {
         console.log("sending player connection request");
         var data = {
           connect: {
-            private_id: this.privateID || null,
-            game_id:   this.gameID || null
+            private_id:   this.privateID || null,
+            game_id:      this.gameID || null,
+            player_name:  playerName
           }
         };
         console.log("Sending in CM: ", data);
         this.websocketHandler.transmit(data);
       }, () => {
         console.log("Error attempting to connect");
+        this.messageRouter.handle({ webSocketDisconnected: true })
       });
   }
 
   // callback for when a connection was successful
   connected(message){
-    this.privateID = message["private_id"];
-    this.gameID = message["game_id"];
-    localStorage.setItem("VoloPrivateID", this.privateID);
-    localStorage.setItem("VoloGameID", this.gameID);
+    this.privateID = message["connected"]["private_id"];
+    this.gameID = message["connected"]["game_id"];
+    this.playerName = message["connected"]["player_name"];
+    localStorage.setItem("VoloPrivateID",  this.privateID);
+    localStorage.setItem("VoloGameID",     this.gameID);
+    localStorage.setItem("VoloPlayerName", this.playerName);
     this.gameConnected = true;
   }
 

@@ -80,6 +80,7 @@ table caption {
 }
 #status_bar table {
   width: 178px;
+  table-layout: fixed;
 }
 #status_bar th {
   font-size: 10px;

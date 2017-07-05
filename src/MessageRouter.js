@@ -6,6 +6,7 @@ import { Dependencies } from 'constitute';
 
 export default class MessageRouter {
   constructor(){
+    console.log("Constructing MessageRouter");
     this.subscriptions = new Map();
   };
 
@@ -30,8 +31,10 @@ export default class MessageRouter {
   // Pass this message to everyone subscribing to one of its keys.
   handle(message) {
     var matchingSubscribers = [];
+    console.log("Handling: ", message);
     this.subscriptions.forEach((subscribers, key) => {
       if (message[key]) {
+        // console.log("Match found: ", subscribers, key)
         // Append all members of subscribers to the accumulated list
         Array.prototype.push.apply(matchingSubscribers, subscribers);
       }

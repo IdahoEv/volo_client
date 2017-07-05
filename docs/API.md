@@ -14,7 +14,8 @@ volo_client attempts to connect as follows:
 // client -> server
 { connect: {
     private_id:  ('12345' or null),
-    game_id: ('12345' or null)  
+    game_id: ('12345' or null),
+    name:  'string'  
   }
 }
 ```
@@ -28,7 +29,8 @@ successful connection will result in this response:
 // server -> client
 { connected: {
     private_id: '12345',
-    game_id: '12345'  
+    game_id: '12345',
+    name: 'string'  
   }
 }
 ```
@@ -39,3 +41,8 @@ A failed connection will result in this response:
 // server -> client
 { connection_failed: "String explaining the reason" }
 ```
+
+Reasons for failure:
+* Private ID specified but does not exist
+* Name is taken for that game, but private_id was not specified
+* Name is taken for that game, but private_id did not match
