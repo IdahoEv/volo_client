@@ -67,8 +67,6 @@ export default class DevUX {
   }
   
   messageReceived(msg)   { 
-    let data = JSON.stringify(msg);
-    console.log('Message Received', msg);
     this.displayMessage('#received_messages', msg.webSocketMessageReceived); 
   }
   messageSent(msg)   { 
