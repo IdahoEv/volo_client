@@ -1,17 +1,19 @@
-console.log("App file loaded");
-import styles from "./app.css"
-
-import setup from "utils";
-setup();
-
-import DevUX from "DevUX";
-import ConnectionManager from "ConnectionManager";
-import WebsocketHandler from "WebsocketHandler";
-import MessageRouter from "MessageRouter";
-
+import 'app.css';
 import constitute from "constitute";
+import { Container } from 'constitute';
+import $ from 'jquery';
+window.$ = $;
+// import setup from "utils";
+// setup();
 
-const cm = constitute(ConnectionManager);
-const devUX = constitute(DevUX);
-cm.initialize();
+// NOTE: order of imports is sensitive here due to interaction with
+// DI framework.
+const container = new Container();
+
+import ConnectionManager from "ConnectionManager";
+import DevUX from "DevUX";
+
+var connectionManager = container.constitute(ConnectionManager);
+var devUX = container.constitute(DevUX)
+connectionManager.initialize();
 devUX.initialize();

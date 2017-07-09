@@ -1,14 +1,12 @@
 import { Dependencies } from 'constitute';
-// import WebsocketHandler from 'WebsocketHandler';
-// import DevUX from "DevUX";
 
 
 // Handles routing messages from the websocket to modules that care
 // about them.
 
-@Dependencies()
 export default class MessageRouter {
-  constructor(websocketHandler, devUX){
+  constructor(){
+    console.log("Constructing MessageRouter");
     this.subscriptions = new Map();
   };
 
@@ -33,8 +31,10 @@ export default class MessageRouter {
   // Pass this message to everyone subscribing to one of its keys.
   handle(message) {
     var matchingSubscribers = [];
+    console.log("Handling: ", message);
     this.subscriptions.forEach((subscribers, key) => {
       if (message[key]) {
+        // console.log("Match found: ", subscribers, key)
         // Append all members of subscribers to the accumulated list
         Array.prototype.push.apply(matchingSubscribers, subscribers);
       }
