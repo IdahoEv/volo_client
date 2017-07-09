@@ -3,6 +3,7 @@
 // game server.
 import { Dependencies } from 'constitute';
 import MessageRouter from "MessageRouter";
+import { Now } from "utils/VoloTime";
 
 @Dependencies(MessageRouter)
 export default class WebsocketHandler {
@@ -11,6 +12,7 @@ export default class WebsocketHandler {
     this.websocket = null;
     this.host = `ws://${this.hostname()}/websocket`;
     this.messageRouter = messageRouter;
+    this.messageRouter.subscribe("heartbeat", this.handleHeartbeat.bind(this));
   }
 
   hostname() {
@@ -68,6 +70,17 @@ export default class WebsocketHandler {
     let message = JSON.parse(evt.data);
     this.messageRouter.handle({ webSocketMessageReceived: message });
     this.messageRouter.handle(message);
+  }
+  
+  handleHeartbeat(message) {
+    this.transmit(
+      JSON.stringify(
+        {
+          id: message.heartbeat.id,
+          client_time: Now()
+        }
+      )
+    )
   }
 
   isReady(){
