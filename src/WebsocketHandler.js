@@ -74,13 +74,11 @@ export default class WebsocketHandler {
   
   handleHeartbeat(message) {
     this.transmit(
-      JSON.stringify({
-        heartbeat_reply:        
-          { id: message.heartbeat.id,
-            client_time: now()
-          }
+      { heartbeat_reply:        
+        { id: message.heartbeat.id,
+          client_time: now()
         }
-      )
+      }
     )
   }
 
