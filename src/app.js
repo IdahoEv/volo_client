@@ -12,8 +12,11 @@ const container = new Container();
 
 import ConnectionManager from "ConnectionManager";
 import DevUX from "DevUX";
+import KeyHandler from "KeyHandler";
 
-var connectionManager = container.constitute(ConnectionManager);
-var devUX = container.constitute(DevUX)
+let connectionManager = container.constitute(ConnectionManager);
+let devUX = container.constitute(DevUX)
+let keyHandler = container.constitute(KeyHandler)
 connectionManager.initialize();
 devUX.initialize();
+keyHandler.initialize();
