@@ -26,16 +26,31 @@ export default class KeyHandler {
   }
   
   updateControlState() {
-    this.controlState = { 'acceleration': 0, 'rotation': 0, 'trigger': 0 };
+    let newControlState = { 'acceleration': 0, 'rotation': 0, 'trigger': 0 };
+    // this.controlState = 
     for (var key in this.keyState) {
       if (this.keyState.hasOwnProperty(key)) {
         // console.log(key + " -> " + p[key]);
         let command = this.keyMap[key][0];
         let val     = this.keyMap[key][1];
-        this.controlState[command] += val; 
+        newControlState[command] += val; 
       }
     }
-    console.log("Control state: ", this.controlState);
+    if(this.hasControlStateChanged(this.controlState, newControlState)) {
+      this.controlState = newControlState;
+      console.log("Control state changed: ", this.controlState);
+    }
+  }
+  
+  hasControlStateChanged(cs1, cs2) {
+    for (var key in cs2) {
+      if (cs1.hasOwnProperty(key)) {
+        if (!(cs1[key] == cs2[key])) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
   
   generateKeyMap() {

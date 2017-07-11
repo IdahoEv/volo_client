@@ -55,7 +55,7 @@ export default class WebsocketHandler {
     if(this.isReady()) {
       // console.log("Transmit function 2, sending ", toSend );
       var data = JSON.stringify(toSend);
-      console.log("sending", data);
+      // console.log("sending", data);
       this.websocket.send(data);
       this.messageRouter.handle({ webSocketMessageSent: data });
     } else {
@@ -64,9 +64,9 @@ export default class WebsocketHandler {
   }
 
   receiveMessage(evt) {
-    console.log(`received message with event:`);
-    console.log(evt);
-    console.log(evt.data);
+    // console.log(`received message with event:`);
+    // console.log(evt);
+    // console.log(evt.data);
     let message = JSON.parse(evt.data);
     this.messageRouter.handle({ webSocketMessageReceived: message });
     this.messageRouter.handle(message);

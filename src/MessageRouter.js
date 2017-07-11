@@ -31,7 +31,7 @@ export default class MessageRouter {
   // Pass this message to everyone subscribing to one of its keys.
   handle(message) {
     var matchingSubscribers = [];
-    console.log("Handling: ", message);
+    // console.log("Handling: ", message);
     this.subscriptions.forEach((subscribers, key) => {
       if (message[key]) {
         // console.log("Match found: ", subscribers, key)
